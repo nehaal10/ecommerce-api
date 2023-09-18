@@ -8,6 +8,7 @@ import (
 type Config struct {
 	DbHost string `mapstructure:"MONGO_URL"`
 	Port   string `mapstructure:"PORT"`
+	Secret string `mapstructure:"SECRET_KEY"`
 }
 
 func NewConfig() (config Config, err error) {

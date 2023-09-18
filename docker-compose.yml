@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:5.0.21
+    ports:
+      - 27017:27017
+    container_name: mongo_db
+    volumes: 
+      - ./database:/data/mongo_db
