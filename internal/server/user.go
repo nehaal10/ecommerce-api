@@ -1,6 +1,8 @@
 package server
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nehaal10/ecommerce-api/internal/conf"
 	"github.com/nehaal10/ecommerce-api/internal/store"
@@ -21,7 +23,7 @@ func Login(c *gin.Context) {
 	var userlogin store.UserLogin
 	err := c.ShouldBindJSON(&userlogin)
 	utils.Checkerr(err)
-	num, res := store.Login(userlogin)
+	num, res, add := store.Login(userlogin)
 
 	if num != 200 {
 		c.JSON(num, gin.H{
@@ -30,10 +32,15 @@ func Login(c *gin.Context) {
 		return
 	}
 	userlogin.UserID = res
+	userlogin.Add = add
 	cfg, err := conf.NewConfig()
 	utils.Checkerr(err)
 	token := JWT(userlogin, cfg)
-	c.JSON(num, gin.H{
-		"token": token,
+	c.SetCookie("plswork", token, int(time.Now().Add(time.Minute*2).Unix()), "/", "localhost", false, true)
+	a, e := GetCoockies(c)
+	c.JSON(200, gin.H{
+		"a":      a,
+		"e":      e,
+		"result": token,
 	})
 }
