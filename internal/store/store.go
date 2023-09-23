@@ -12,9 +12,11 @@ import (
 )
 
 type Collection struct {
-	NewUser *mongo.Collection
-	Cutomer *mongo.Collection
-	Product *mongo.Collection
+	NewUser        *mongo.Collection
+	Cutomer        *mongo.Collection
+	Product        *mongo.Collection
+	VendorRegister *mongo.Collection
+	Vendor         *mongo.Collection
 }
 
 var db Collection
@@ -26,6 +28,8 @@ func SetupDBConeection(cfg conf.Config) {
 	dbLogin := client.Database("ecommerce").Collection("register")
 	dbCustomer := client.Database("ecommerce").Collection("user")
 	dbProduct := client.Database("ecommerce").Collection("product")
+	dbVendorRegister := client.Database("ecommerce").Collection("vendor_register")
+	dbVendor := client.Database("ecommerce").Collection("vendor")
 	if err := client.Ping(context.TODO(), readpref.Primary()); err != nil {
 		panic(err)
 	}
@@ -37,10 +41,28 @@ func SetupDBConeection(cfg conf.Config) {
 	_, err = dbLogin.Indexes().CreateOne(context.TODO(), registerModel)
 	utils.Checkerr(err)
 
+	vendormodel := mongo.IndexModel{
+		Keys:    bson.M{"email_id": 1},
+		Options: options.Index().SetUnique(true),
+	}
+
+	_, err = dbVendorRegister.Indexes().CreateOne(context.TODO(), vendormodel)
+	utils.Checkerr(err)
+
+	vendormodeld := mongo.IndexModel{
+		Keys:    bson.M{"email_id": 1},
+		Options: options.Index().SetUnique(true),
+	}
+
+	_, err = dbVendor.Indexes().CreateOne(context.TODO(), vendormodeld)
+	utils.Checkerr(err)
+
 	db = Collection{
-		NewUser: dbLogin,
-		Cutomer: dbCustomer,
-		Product: dbProduct,
+		NewUser:        dbLogin,
+		Cutomer:        dbCustomer,
+		Product:        dbProduct,
+		VendorRegister: dbVendorRegister,
+		Vendor:         dbVendor,
 	}
 
 }

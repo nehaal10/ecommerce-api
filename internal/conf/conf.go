@@ -1,7 +1,6 @@
 package conf
 
 import (
-	"github.com/nehaal10/ecommerce-api/internal/utils"
 	"github.com/spf13/viper"
 )
 
@@ -17,8 +16,9 @@ func NewConfig() (config Config, err error) {
 	viper.SetConfigType("env")
 	viper.AutomaticEnv()
 
-	err = viper.ReadInConfig()
-	utils.Checkerr(err)
+	if err = viper.ReadInConfig(); err != nil {
+		panic(err)
+	}
 
 	viper.Unmarshal(&config)
 	return

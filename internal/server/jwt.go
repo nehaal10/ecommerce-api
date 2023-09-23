@@ -1,24 +1,27 @@
 package server
 
 import (
-	"fmt"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/nehaal10/ecommerce-api/internal/conf"
 	"github.com/nehaal10/ecommerce-api/internal/store"
 	"github.com/nehaal10/ecommerce-api/internal/utils"
 )
 
-type JwtSchema struct {
+type jwtSchema struct {
 	UserID string `json:"user_id"`
+	jwt.RegisteredClaims
+}
+
+type vendorJWTschema struct {
+	Admin_id string `json:"admin_id"`
 	jwt.RegisteredClaims
 }
 
 func JWT(user store.UserLogin, cfg conf.Config) string {
 	expirationTime := time.Now().Add(time.Minute * 2)
-	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, JwtSchema{
+	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwtSchema{
 		UserID: user.UserID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    user.UserID,
@@ -30,19 +33,16 @@ func JWT(user store.UserLogin, cfg conf.Config) string {
 	return token
 }
 
-func GetCoockies(c *gin.Context) (string, error) {
-	cfg, err := conf.NewConfig()
-	utils.Checkerr(err)
-	cook, err := c.Request.Cookie("plswork")
-	utils.Checkerr(err)
-	token, err := jwt.ParseWithClaims(cook.Value, &JwtSchema{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(cfg.Secret), nil
+func JWTVendor(ven store.VendorLogin, cfg conf.Config) string {
+	expirationTime := time.Now().Add(time.Minute * 2)
+	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, vendorJWTschema{
+		Admin_id: ven.Admin_id,
+		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer:    ven.Admin_id,
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
+		},
 	})
-	if err != nil {
-		fmt.Println(err)
-		utils.Checkerr(err)
-	}
-	claims, _ := token.Claims.(*JwtSchema)
-	UserId := claims.UserID
-	return UserId, nil
+	token, err := claims.SignedString([]byte(cfg.Secret))
+	utils.Checkerr(err)
+	return token
 }

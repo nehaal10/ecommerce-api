@@ -36,11 +36,6 @@ func Login(c *gin.Context) {
 	cfg, err := conf.NewConfig()
 	utils.Checkerr(err)
 	token := JWT(userlogin, cfg)
-	c.SetCookie("plswork", token, int(time.Now().Add(time.Minute*2).Unix()), "/", "localhost", false, true)
-	a, e := GetCoockies(c)
-	c.JSON(200, gin.H{
-		"a":      a,
-		"e":      e,
-		"result": token,
-	})
+	c.SetCookie("plswork", token, int(time.Now().Add(time.Minute*2).Unix()), "/", "localhost", true, true)
+	store.Customer(token)
 }
