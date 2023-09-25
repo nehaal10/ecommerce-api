@@ -2,7 +2,6 @@ package store
 
 import (
 	"context"
-	"fmt"
 	"os/exec"
 	"strings"
 
@@ -43,7 +42,7 @@ type Address struct {
 }
 
 func AddUser(user User) string {
-	user.UserID = generateUniqueID()
+	user.UserID = GenerateUniqueID()
 	user.Password = utils.PasswordHash(user.Password)
 	if checkEmail(user.EmailID, user.Phone_No) {
 		db.NewUser.InsertOne(context.TODO(), user)
@@ -56,7 +55,7 @@ func AddUser(user User) string {
 func checkEmail(email string, num string) bool {
 	var returned []User
 	filter := bson.M{
-		"$and": []bson.M{
+		"$or": []bson.M{
 			{"email_id": email},
 			{"phone_no": num},
 		},
@@ -70,7 +69,7 @@ func checkEmail(email string, num string) bool {
 func checkVendor(email string, num string) bool {
 	var returned []Vendor
 	filter := bson.M{
-		"$and": []bson.M{
+		"$or": []bson.M{
 			{"email_id": email},
 			{"phone_no": num},
 		},
@@ -81,7 +80,7 @@ func checkVendor(email string, num string) bool {
 	return len(returned) == 0
 }
 
-func generateUniqueID() string {
+func GenerateUniqueID() string {
 	id := ksuid.New()
 	return id.String()
 }
@@ -91,12 +90,11 @@ func uniqueKey() string {
 	utils.Checkerr(err)
 	str := string(newUUID)
 	str = strings.TrimSpace(str)
-	fmt.Println(str)
 	return str
 }
 
 func RegisterAdmin(vendor Vendor) (int, string) {
-	vendor.Admin_id = generateUniqueID()
+	vendor.Admin_id = GenerateUniqueID()
 	vendor.Password = utils.PasswordHash(vendor.Password)
 	//assigning unique key for the vendor
 	vendor.Key = uniqueKey()

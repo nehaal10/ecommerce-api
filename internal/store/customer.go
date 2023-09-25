@@ -9,15 +9,11 @@ import (
 
 type CustomerDatabase struct {
 	UserID          string     `json:"user_id" bson:"user_id"`
-	Cart            []Product  `bson:"cart"`
+	Cart            []CartAdd  `bson:"cart"`
 	EmailID         string     `bson:"email_id"`
 	Address         []Address  `bson:"Adress"`
 	ProductWishList []WishList `bson:"wishlist"`
 	Password        string     `bson:"password"`
-}
-
-type ProductList struct {
-	Product []Product `json:"product"`
 }
 
 type WishList struct {
@@ -28,7 +24,7 @@ type WishList struct {
 type Product struct {
 	VendorID    string `json:"vendor_id,omitempty" bson:"vendor_id"`
 	Category    string `jsno:"category" bson:"category"`
-	ProductID   string `jsno:"product_id" bson:"product_id"`
+	ProductID   string `jsno:"product_id,omitempty" bson:"product_id"`
 	ProductName string `json:"product_name" bson:"product_name"`
 	Price       int    `json:"price" bson:"price"`
 	Quantity    int    `json:"quantity" bson:"quantity"`

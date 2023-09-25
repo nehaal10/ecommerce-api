@@ -9,7 +9,7 @@ import (
 	"github.com/nehaal10/ecommerce-api/internal/utils"
 )
 
-var ID string
+var Vendor_id string
 
 func VendorRegister(c *gin.Context) {
 	var v store.Vendor
@@ -27,7 +27,7 @@ func Vlogin(c *gin.Context) {
 	err = c.ShouldBindJSON(&vl)
 	utils.Checkerr(err)
 	num, str := store.LoginVendor(vl)
-	ID = str
+	Vendor_id = str
 	if num != 200 {
 		c.JSON(num, gin.H{
 			"Message": str,
