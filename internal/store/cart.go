@@ -6,6 +6,7 @@ import (
 
 	"github.com/nehaal10/ecommerce-api/internal/utils"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -15,15 +16,42 @@ type CartAdd struct {
 	Quantity    int    `json:"quantity"`
 }
 
-func UpadateCart(cartproducts []CartAdd) {
-
+func UpadateCart(cartproducts []CartAdd, id string) {
+	var cus CustomerDatabase
+	var update primitive.M
 	var prod []interface{}
 	for num, product := range cartproducts {
-		isTrue := checkQuantity(cartproducts[num])
-		if isTrue {
-			prod = append(prod, product)
+		if !checkProductInventory(cartproducts[num].ProductName) {
+			isTrue := checkQuantity(cartproducts[num])
+			if isTrue {
+				prod = append(prod, product)
+			}
 		}
 	}
+
+	filter := bson.M{
+		"user_id": id,
+	}
+
+	db.Cutomer.FindOne(context.TODO(), filter).Decode(&cus)
+
+	if cus.Cart == nil {
+		update = bson.M{
+			"$set": bson.M{
+				"cart": prod,
+			},
+		}
+	} else {
+		update = bson.M{
+			"$push": bson.M{
+				"cart": bson.M{
+					"$each": prod,
+				},
+			},
+		}
+	}
+
+	db.Cutomer.UpdateOne(context.TODO(), filter, update)
 }
 
 func checkQuantity(product CartAdd) bool {
@@ -56,6 +84,18 @@ func aggregateQuantity(prod string, q int) bool {
 		panic(err)
 	}
 	return t[0].Total >= q
+}
+
+func checkProductInventory(prodName string) bool {
+	var p []Product
+	filter := bson.M{
+		"product_name": prodName,
+	}
+
+	curr, err := db.Product.Find(context.TODO(), filter)
+	utils.Checkerr(err)
+	curr.All(context.TODO(), &p)
+	return len(p) == 0
 }
 
 type tot struct {

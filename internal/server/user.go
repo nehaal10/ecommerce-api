@@ -9,6 +9,8 @@ import (
 	"github.com/nehaal10/ecommerce-api/internal/utils"
 )
 
+var UserID string
+
 func Register(c *gin.Context) {
 	var user store.User
 	err := c.ShouldBindJSON(&user)
@@ -31,6 +33,7 @@ func Login(c *gin.Context) {
 		})
 		return
 	}
+	UserID = res
 	userlogin.UserID = res
 	userlogin.Add = add
 	cfg, err := conf.NewConfig()

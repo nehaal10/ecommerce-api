@@ -8,17 +8,12 @@ import (
 )
 
 type CustomerDatabase struct {
-	UserID          string     `json:"user_id" bson:"user_id"`
-	Cart            []CartAdd  `bson:"cart"`
-	EmailID         string     `bson:"email_id"`
-	Address         []Address  `bson:"Adress"`
-	ProductWishList []WishList `bson:"wishlist"`
-	Password        string     `bson:"password"`
-}
-
-type WishList struct {
-	UserId   string    `bson:"user_id"`
-	Products []Product `bson:"product"`
+	UserID          string    `json:"user_id" bson:"user_id"`
+	Cart            []CartAdd `bson:"cart"`
+	EmailID         string    `bson:"email_id"`
+	Address         []Address `bson:"Adress"`
+	ProductWishList []CartAdd `bson:"wishlist"`
+	Password        string    `bson:"password"`
 }
 
 type Product struct {
