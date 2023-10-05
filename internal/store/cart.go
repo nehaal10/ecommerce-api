@@ -16,9 +16,10 @@ type CartAdd struct {
 	Quantity    int    `json:"quantity"`
 }
 
-func UpadateCart(cartproducts []CartAdd, id string) {
+func UpadateCart(cartproducts []CartAdd, id string) []string {
 	var cus CustomerDatabase
 	var update primitive.M
+	var response []string
 	var prod []interface{}
 	for num, product := range cartproducts {
 		ok, price := checkProductInventory(cartproducts[num].ProductName)
@@ -27,7 +28,15 @@ func UpadateCart(cartproducts []CartAdd, id string) {
 			if isTrue {
 				product.Price = price
 				prod = append(prod, product)
+				str := fmt.Sprintf("%s added to cart", product.ProductName)
+				response = append(response, str)
+			} else {
+				str := fmt.Sprintf("%s out of stock", product.ProductName)
+				response = append(response, str)
 			}
+		} else {
+			str := fmt.Sprintf("%s out of stock", product.ProductName)
+			response = append(response, str)
 		}
 	}
 
@@ -54,6 +63,8 @@ func UpadateCart(cartproducts []CartAdd, id string) {
 	}
 
 	db.Cutomer.UpdateOne(context.TODO(), filter, update)
+
+	return response
 }
 
 func checkQuantity(product CartAdd) bool {

@@ -40,5 +40,9 @@ func Login(c *gin.Context) {
 	utils.Checkerr(err)
 	token := JWT(userlogin, cfg)
 	c.SetCookie("plswork", token, int(time.Now().Add(time.Minute*2).Unix()), "/", "localhost", true, true)
+	c.JSON(200, gin.H{
+		"message": "logged in",
+	})
 	store.Customer(token)
+
 }
