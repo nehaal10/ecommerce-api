@@ -18,5 +18,10 @@ func Start(cfg conf.Config) {
 	r.POST("/api/admin/addproduct", Product)
 	r.GET("/api/view/products", ShowAllProduct)
 	r.POST("/api/user/cart/add", AddtoCart)
+	r.GET("/api/user/cart/view", CartView)
+	r.DELETE("/api/user/cart/remove", Deletecart)
+	r.POST("/api/user/wishlist/add", WishlistAdd)
+	r.GET("/api/user/wishlist/view", WishlistView)
+	r.DELETE("/api/user/wishlist/remove", DeleteWishlist)
 	r.Run()
 }

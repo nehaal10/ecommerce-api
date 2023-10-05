@@ -16,6 +16,10 @@ type CustomerDatabase struct {
 	Password        string    `bson:"password"`
 }
 
+type Wishlist struct {
+	Product_name string `json:"product_name"`
+}
+
 type Product struct {
 	VendorID    string `json:"vendor_id,omitempty" bson:"vendor_id"`
 	Category    string `jsno:"category" bson:"category"`

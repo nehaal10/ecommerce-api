@@ -20,6 +20,8 @@ func AddProduct(prod []Product, id string) {
 	for num, val := range prod {
 		prod[num].VendorID = id
 		prod[num].ProductID = GenerateUniqueID()
+		val.VendorID = id
+		val.ProductID = GenerateUniqueID()
 		prodInterface = append(prodInterface, val)
 	}
 	db.Product.InsertMany(context.TODO(), prodInterface)
